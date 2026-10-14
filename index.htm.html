@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة وظائف المدينة | بوابة التوظيف الأولى بمنطقة المدينة المنورة</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        madinah: {
+                            emerald: 'var(--color-emerald, #1b4332)',
+                            olive: 'var(--color-olive, #2d5a27)',
+                            lightOlive: '#40916c',
+                            gold: 'var(--color-gold, #d4af37)',
+                            softGold: '#f3e5ab',
+                            goldHover: '#b89628',
+                            bgLight: '#f8faf8',
+                            cardBg: '#ffffff',
+                            darkText: '#1f2937'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'Cairo', 'sans-serif'],
+                        heading: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --color-emerald: #1b4332;
+            --color-olive: #2d5a27;
+            --color-gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8faf8;
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, var(--color-gold) 0%, #f3e5ab 50%, #b89628 100%);
+        }
+        
+        .emerald-gradient {
+            background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-olive) 100%);
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(27, 67, 50, 0.95) 0%, rgba(45, 90, 39, 0.9) 100%), url('https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #40916c;
+            border-radius: 8px;
+        }
+        
+        .job-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(27, 67, 50, 0.15);
+        }
+
+        .editable-highlight {
+            outline: 2px dashed #d4af37 !important;
+            background-color: rgba(212, 175, 55, 0.15) !important;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- LIVE ADMIN DASHBOARD BAR -->
+    <div id="admin-bar" class="bg-gray-900 text-white text-xs py-2 px-4 sticky top-0 z-50 border-b border-madinah-gold/40 flex flex-wrap items-center justify-between gap-2 shadow-lg">
+        <div class="flex items-center gap-3">
+            <span class="bg-madinah-gold text-gray-900 font-extrabold px-2 py-0.5 rounded text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-user-gear"></i> لوحة التحكم بالموقع
+            </span>
+            <span class="text-gray-300 hidden sm:inline">أهلاً بك، يمكنك التعديل المباشر على المحتوى والألوان بسهولة:</span>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2">
+            <!-- Toggle Quick Edit Mode -->
+            <button onclick="toggleQuickEditMode()" id="quick-edit-btn" class="bg-gray-800 hover:bg-gray-700 text-madinah-softGold px-3 py-1.5 rounded-lg border border-gray-700 transition flex items-center gap-1.5 font-semibold">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span id="quick-edit-label">تفعيل التعديل المباشر</span>
+            </button>
+
+            <!-- Manage Jobs Modal Trigger -->
+            <button onclick="toggleManageJobsModal()" class="bg-madinah-emerald hover:bg-madinah-olive text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-semibold">
+                <i class="fa-solid fa-list-check"></i>
+                <span>إدارة الوظائف الحالية</span>
+            </button>
+
+            <!-- Change Colors Modal Trigger -->
+            <button onclick="toggleThemeModal()" class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg border border-gray-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-palette text-madinah-gold"></i>
+                <span>تخصيص الألوان</span>
+            </button>
+
+            <!-- Guide Modal Trigger -->
+            <button onclick="toggleGuideModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-semibold">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>كيف أنشر الموقع؟</span>
+            </button>
+
+            <!-- Reset Data -->
+            <button onclick="confirmResetData()" class="bg-red-900/60 hover:bg-red-800 text-red-200 px-2.5 py-1.5 rounded-lg transition text-[11px]" title="إعادة ضبط البيانات الأصلية">
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="bg-white/95 backdrop-blur-md shadow-sm border-b border-emerald-900/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="resetFilters()">
+                    <div class="w-12 h-12 rounded-xl emerald-gradient flex items-center justify-center text-madinah-gold shadow-md border border-madinah-gold/30">
+                        <i class="fa-solid me-0.5 fa-city text-2xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-black font-heading text-madinah-emerald tracking-tight block leading-none" id="site-logo-text" data-editable="logo">وظائف <span class="text-madinah-gold">المدينة</span></span>
+                        <span class="text-xs text-gray-500 font-medium" id="site-sublogo-text" data-editable="sublogo">بوابة التوظيف المباشر بمنطقة المدينة المنورة</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8 font-medium text-gray-700">
+                    <a href="#jobs-section" class="hover:text-madinah-emerald transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-madinah-lightOlive text-sm"></i> الوظائف المتاحة
+                    </a>
+                    <a href="#employers-section" class="hover:text-madinah-emerald transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-building text-madinah-lightOlive text-sm"></i> أصحاب الأعمال
+                    </a>
+                    <a href="#tips-section" class="hover:text-madinah-emerald transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-madinah-lightOlive text-sm"></i> نصائح التوظيف
+                    </a>
+                    <button onclick="toggleSavedModal()" class="relative hover:text-madinah-emerald transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200">
+                        <i class="fa-solid fa-bookmark text-madinah-gold"></i>
+                        <span>المفضلة</span>
+                        <span id="saved-count" class="bg-madinah-emerald text-white text-xs font-bold px-2 py-0.5 rounded-full mr-1">0</span>
+                    </button>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="flex items-center gap-3">
+                    <button onclick="scrollToSection('add-job-form')" class="hidden sm:inline-flex items-center gap-2 bg-madinah-emerald hover:bg-madinah-olive text-white px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all hover:shadow-lg text-sm">
+                        <i class="fa-solid fa-plus-circle text-madinah-gold"></i>
+                        <span>أضف إعلان وظيفي</span>
+                    </button>
+                    <!-- Mobile menu button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-gray-600 hover:text-madinah-emerald hover:bg-gray-100">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 space-y-3">
+            <a href="#jobs-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-madinah-emerald"><i class="fa-solid fa-briefcase ml-2 text-madinah-lightOlive"></i>الوظائف المتاحة</a>
+            <a href="#employers-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-madinah-emerald"><i class="fa-solid fa-building ml-2 text-madinah-lightOlive"></i>أصحاب الأعمال</a>
+            <a href="#tips-section" onclick="toggleMobileMenu()" class="block py-2 text-gray-700 font-medium hover:text-madinah-emerald"><i class="fa-solid fa-lightbulb ml-2 text-madinah-lightOlive"></i>نصائح التوظيف</a>
+            <button onclick="toggleSavedModal(); toggleMobileMenu()" class="w-full text-right py-2 text-gray-700 font-medium hover:text-madinah-emerald flex items-center justify-between">
+                <span><i class="fa-solid fa-bookmark ml-2 text-madinah-gold"></i>الوظائف المحفوظة</span>
+                <span id="saved-count-mobile" class="bg-madinah-emerald text-white text-xs px-2 py-0.5 rounded-full">0</span>
+            </button>
+            <button onclick="scrollToSection('add-job-form'); toggleMobileMenu()" class="w-full mt-2 bg-madinah-emerald text-white py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus-circle text-madinah-gold"></i>
+                <span>أضف إعلان وظيفي بالمدينة</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-16 lg:py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-madinah-softGold text-xs sm:text-sm font-semibold mb-2">
+                    <i class="fa-solid fa-location-dot"></i> <span id="hero-badge-text" data-editable="heroBadge">منصة متخصصة وموجهة حصرياً لمنطقة المدينة المنورة</span>
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-black font-heading leading-tight tracking-tight" id="hero-title" data-editable="heroTitle">
+                    فرصتك الوظيفية القادمة في <span class="text-madinah-gold underline decoration-madinah-gold/40 underline-offset-8">طيبة الطيبة</span>
+                </h1>
+                <p class="text-gray-200 text-base sm:text-lg max-w-2xl mx-auto font-normal" id="hero-subtitle" data-editable="heroSubtitle">
+                    ربط الكفاءات الوطنية بفرص العمل الحقيقية في القطاع الحكومي والخاص، الفندقة، الصحة، والتعلِيم داخل أحياء ومناطق المدينة المنورة.
+                </p>
+            </div>
+
+            <!-- Main Interactive Search Box -->
+            <div class="mt-10 max-w-4xl mx-auto bg-white p-4 sm:p-5 rounded-2xl shadow-2xl border border-white/20 text-gray-800">
+                <form id="hero-search-form" onsubmit="handleHeroSearch(event)" class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <div class="md:col-span-5 relative">
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="search-keyword" placeholder="المسمى الوظيفي، اسم الشركة، أو المهارة..." class="w-full pr-10 pl-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-madinah-emerald focus:bg-white text-sm outline-none transition-all">
+                    </div>
+
+                    <div class="md:col-span-3 relative">
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <select id="search-sector" class="w-full pr-10 pl-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-madinah-emerald focus:bg-white text-sm outline-none transition-all appearance-none text-gray-700">
+                            <option value="">جميع القطاعات</option>
+                            <option value="حكومي / شبه حكومي">حكومي / شبه حكومي</option>
+                            <option value="السياحة والفندقة">السياحة والفندقة</option>
+                            <option value="القطاع الصحي">القطاع الصحي</option>
+                            <option value="التعليم والتدريب">التعليم والتدريب</option>
+                            <option value="المبيعات والتجزئة">المبيعات والتجزئة</option>
+                            <option value="التكنولوجيا والتقنية">التكنولوجيا والتقنية</option>
+                            <option value="الهندسة والمقاولات">الهندسة والمقاولات</option>
+                        </select>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 relative">
+                        <select id="search-type" class="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-madinah-emerald focus:bg-white text-sm outline-none transition-all appearance-none text-gray-700">
+                            <option value="">كل أنواع الدوام</option>
+                            <option value="دوام كامل">دوام كامل</option>
+                            <option value="دوام جزئي">دوام جزئي</option>
+                            <option value="عن بعد">عن بعد</option>
+                            <option value="تدريب / تمهير">تدريب / تمهير</option>
+                        </select>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full h-full min-h-[48px] bg-madinah-emerald hover:bg-madinah-olive text-white font-bold rounded-xl transition-colors shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-search"></i>
+                            <span>بحث</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                    <span class="font-semibold text-gray-700">الأكثر بحتاً بالمدينة:</span>
+                    <button onclick="quickSearch('استقبال')" class="px-2.5 py-1 bg-gray-100 hover:bg-madinah-emerald/10 hover:text-madinah-emerald rounded-lg transition-colors">استقبال فندقي</button>
+                    <button onclick="quickSearch('تمريض')" class="px-2.5 py-1 bg-gray-100 hover:bg-madinah-emerald/10 hover:text-madinah-emerald rounded-lg transition-colors">تمريض</button>
+                    <button onclick="quickSearch('مبيعات')" class="px-2.5 py-1 bg-gray-100 hover:bg-madinah-emerald/10 hover:text-madinah-emerald rounded-lg transition-colors">مبيعات مولات</button>
+                    <button onclick="quickSearch('تمهير')" class="px-2.5 py-1 bg-gray-100 hover:bg-madinah-emerald/10 hover:text-madinah-emerald rounded-lg transition-colors">برنامج تمهير</button>
+                    <button onclick="quickSearch('العزيزية')" class="px-2.5 py-1 bg-gray-100 hover:bg-madinah-emerald/10 hover:text-madinah-emerald rounded-lg transition-colors">حي العزيزية</button>
+                </div>
+            </div>
+
+            <!-- Quick Stats Section -->
+            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center">
+                    <div id="stat-jobs" class="text-2xl sm:text-3xl font-extrabold text-madinah-gold">148+</div>
+                    <div class="text-xs sm:text-sm text-gray-200 mt-1">وظيفة متاحة اليوم</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white">65+</div>
+                    <div class="text-xs sm:text-sm text-gray-200 mt-1">منشأة ومؤسسة مسجلة</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-madinah-softGold">1,250+</div>
+                    <div class="text-xs sm:text-sm text-gray-200 mt-1">متقدم بالمدينة هذا الشهر</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 text-center">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white">100%</div>
+                    <div class="text-xs sm:text-sm text-gray-200 mt-1">وظائف موثوقة حصرياً</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main id="jobs-section" class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Sidebar Filters -->
+            <aside class="w-full lg:w-1/4 space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-28">
+                    <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+                        <h3 class="font-bold text-lg font-heading text-madinah-emerald flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-madinah-gold"></i> تصفية الوظائف
+                        </h3>
+                        <button onclick="resetFilters()" class="text-xs text-gray-500 hover:text-madinah-emerald underline">إعادة ضبط</button>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <label class="font-semibold text-sm text-gray-800 block">الأحياء والمناطق بالمدينة:</label>
+                        <select id="filter-district" onchange="applyFilters()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                            <option value="">جميع الأحياء والقطاعات</option>
+                            <option value="المنطقة المركزية (الحرم)">المنطقة المركزية (بجوار الحرم)</option>
+                            <option value="العزيزية">العزيزية</option>
+                            <option value="سلطانة">سلطانة (شارع أبي بكر)</option>
+                            <option value="العوالي">العوالي</option>
+                            <option value="طريق المطار">طريق المطار</option>
+                            <option value="المدينة الصناعية">المدينة الصناعية</option>
+                            <option value="الهجرة / الهدا">حي الهجرة / الهدا</option>
+                            <option value="المجمعات والمولات">المجمعات والمولات (النور/النخيل)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <label class="font-semibold text-sm text-gray-800 block">مستوى الخبرة المطلوبة:</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-madinah-emerald">
+                                <input type="checkbox" value="حديث تخرج / بدون خبرة" onchange="applyFilters()" class="exp-checkbox rounded text-madinah-emerald focus:ring-madinah-emerald border-gray-300">
+                                <span>حديث تخرج / بدون خبرة</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-madinah-emerald">
+                                <input type="checkbox" value="1-3 سنوات" onchange="applyFilters()" class="exp-checkbox rounded text-madinah-emerald focus:ring-madinah-emerald border-gray-300">
+                                <span>1 - 3 سنوات</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:text-madinah-emerald">
+                                <input type="checkbox" value="أكثر من 3 سنوات" onchange="applyFilters()" class="exp-checkbox rounded text-madinah-emerald focus:ring-madinah-emerald border-gray-300">
+                                <span>أكثر من 3 سنوات خبرة</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <label class="font-semibold text-sm text-gray-800 block">طبيعة العمل:</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <input type="radio" name="workTypeRadio" value="" onchange="applyFilters()" checked class="text-madinah-emerald focus:ring-madinah-emerald">
+                                <span>الكل</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <input type="radio" name="workTypeRadio" value="دوام كامل" onchange="applyFilters()" class="text-madinah-emerald focus:ring-madinah-emerald">
+                                <span>دوام كامل</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <input type="radio" name="workTypeRadio" value="دوام جزئي" onchange="applyFilters()" class="text-madinah-emerald focus:ring-madinah-emerald">
+                                <span>دوام جزئي</span>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                <input type="radio" name="workTypeRadio" value="تدريب / تمهير" onchange="applyFilters()" class="text-madinah-emerald focus:ring-madinah-emerald">
+                                <span>تدريب / تمهير</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <label class="flex items-center justify-between cursor-pointer">
+                            <span class="text-sm font-semibold text-gray-700">عرض الوظائف الحصرية فقط</span>
+                            <input type="checkbox" id="exclusive-only" onchange="applyFilters()" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-madinah-emerald relative"></div>
+                        </label>
+                    </div>
+
+                </div>
+            </aside>
+
+            <!-- Job Cards Listing Area -->
+            <section class="w-full lg:w-3/4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-gray-200 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold font-heading text-madinah-emerald flex items-center gap-2">
+                            <span>الوظائف الشاغرة بالمدينة المنورة</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-gray-500 mt-1">يتم تحديث الفرص الوظيفية بشكل يومي من مختلف القطاعات</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                        <span class="text-xs text-gray-500 whitespace-nowrap">عدد النتائج:</span>
+                        <span id="results-count" class="font-bold text-madinah-emerald bg-madinah-emerald/10 px-3 py-1 rounded-full text-sm">0 وظيفة</span>
+                    </div>
+                </div>
+
+                <div id="active-badges" class="flex flex-wrap gap-2 mb-4 hidden"></div>
+
+                <div id="job-cards-container" class="space-y-4"></div>
+
+                <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+                    <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-700">لا توجد وظائف مطابقة لمحددات البحث!</h3>
+                    <p class="text-sm text-gray-500 mt-1">جرب تغيير شروط الفلترة أو الكلمات المفتاحية في مربع البحث</p>
+                    <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-madinah-emerald text-white text-sm font-semibold rounded-xl hover:bg-madinah-olive transition-colors">
+                        إعادة ضبط البحث
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Employers Section (Add Job Form) -->
+    <section id="employers-section" class="bg-emerald-950 text-white py-16 my-12 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span class="text-madinah-gold text-xs font-bold uppercase tracking-wider bg-madinah-gold/10 px-3 py-1 rounded-full border border-madinah-gold/20">خدمة أصحاب الأعمال والمنشآت</span>
+                <h2 class="text-3xl font-bold font-heading mt-3">أعلن عن وظيفة جديدة بالمدينة المنورة</h2>
+                <p class="text-gray-300 text-sm mt-2">انشر إعلانك الوظيفي مجاناً واستقطب أفضل الكفاءات والكوادر الوطنية المسجلة في منطقة المدينة.</p>
+            </div>
+
+            <div id="add-job-form" class="bg-white text-gray-800 rounded-2xl p-6 sm:p-8 shadow-2xl border border-white/10">
+                <form id="new-job-form" onsubmit="handleAddNewJob(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">المسمى الوظيفي <span class="text-red-500">*</span></label>
+                            <input type="text" id="post-title" required placeholder="مثال: مدير مبيعات، أخصائي تسويق..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">اسم الشركة / المنشأة <span class="text-red-500">*</span></label>
+                            <input type="text" id="post-company" required placeholder="مثال: مجموعة فنادق المدينة، مستشفى..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">القطاع / المجال <span class="text-red-500">*</span></label>
+                            <select id="post-sector" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                                <option value="السياحة والفندقة">السياحة والفندقة</option>
+                                <option value="القطاع الصحي">القطاع الصحي</option>
+                                <option value="التعليم والتدريب">التعليم والتدريب</option>
+                                <option value="المبيعات والتجزئة">المبيعات والتجزئة</option>
+                                <option value="التكنولوجيا والتقنية">التكنولوجيا والتقنية</option>
+                                <option value="الهندسة والمقاولات">الهندسة والمقاولات</option>
+                                <option value="حكومي / شبه حكومي">حكومي / شبه حكومي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">الحي / الموقع بالمدينة المنورة <span class="text-red-500">*</span></label>
+                            <select id="post-location" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                                <option value="المنطقة المركزية (الحرم)">المنطقة المركزية (بجوار الحرم)</option>
+                                <option value="العزيزية">العزيزية</option>
+                                <option value="سلطانة">سلطانة</option>
+                                <option value="العوالي">العوالي</option>
+                                <option value="طريق المطار">طريق المطار</option>
+                                <option value="المدينة الصناعية">المدينة الصناعية</option>
+                                <option value="المجمعات والمولات">المجمعات والمولات</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">نوع الدوام <span class="text-red-500">*</span></label>
+                            <select id="post-type" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                                <option value="دوام كامل">دوام كامل</option>
+                                <option value="دوام جزئي">دوام جزئي</option>
+                                <option value="عن بعد">عن بعد</option>
+                                <option value="تدريب / تمهير">تدريب / تمهير</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">الراتب المتوقع (اختياري)</label>
+                            <input type="text" id="post-salary" placeholder="مثال: 5,000 - 7,000 ريال" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2">وصف الوظيفة والشروط المطلوبة <span class="text-red-500">*</span></label>
+                        <textarea id="post-desc" rows="4" required placeholder="اكتب التفاصيل الكاملة والمهارات المطلوبة للوظيفة..." class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-madinah-emerald outline-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="post-exclusive" checked class="rounded text-madinah-emerald focus:ring-madinah-emerald">
+                        <label for="post-exclusive" class="text-xs font-semibold text-gray-700">إضافة شارة "وظيفة حصرية بالمدينة المنورة"</label>
+                    </div>
+
+                    <div class="text-left pt-2">
+                        <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-madinah-emerald hover:bg-madinah-olive text-white font-bold rounded-xl shadow-lg transition-all text-sm inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-madinah-gold"></i>
+                            <span>نشر الإعلان الوظيفي الآن</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section id="tips-section" class="py-12 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                <div>
+                    <span class="text-xs font-bold text-madinah-gold uppercase tracking-wider">دليل الباحثين عن عمل</span>
+                    <h2 class="text-2xl font-bold font-heading text-madinah-emerald mt-1">نصائح وإرشادات التوظيف بالمدينة المنورة</h2>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-500 mt-2 md:mt-0 max-w-md">مقالات وإرشادات لمساعدتك في بناء سيرتك الذاتية وتجاوز مقابلات العمل بقطاعات المدينة المنورة</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-madinah-bgLight rounded-2xl p-6 border border-gray-100 hover:border-madinah-emerald/30 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-madinah-emerald/10 text-madinah-emerald flex items-center justify-center mb-4 text-lg">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-gray-800 mb-2">كيف تستفيد من برنامج "تمهير" بالمدينة؟</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed mb-4">خطوات التسجيل للحصول على تدريب على رأس العمل في المنشآت الحكومية والخاصة المميزة بالمدينة المنورة والحصول على مكافأة صندوق "هدف".</p>
+                    <span class="text-xs font-semibold text-madinah-emerald inline-flex items-center gap-1">قراءة المزيد <i class="fa-solid fa-arrow-left text-[10px]"></i></span>
+                </div>
+
+                <div class="bg-madinah-bgLight rounded-2xl p-6 border border-gray-100 hover:border-madinah-emerald/30 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-madinah-gold/20 text-madinah-emerald flex items-center justify-center mb-4 text-lg">
+                        <i class="fa-solid fa-hotel"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-gray-800 mb-2">دليل العمل في قطاع الضيافة والحرمين</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed mb-4">أهم المهارات واللغات المطلوب إتقانها للعمل في الفنادق والخدمات اللوجستية المجاورة للمسجد النبوي الشريف بالمنطقة المركزية.</p>
+                    <span class="text-xs font-semibold text-madinah-emerald inline-flex items-center gap-1">قراءة المزيد <i class="fa-solid fa-arrow-left text-[10px]"></i></span>
+                </div>
+
+                <div class="bg-madinah-bgLight rounded-2xl p-6 border border-gray-100 hover:border-madinah-emerald/30 transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-madinah-emerald/10 text-madinah-emerald flex items-center justify-center mb-4 text-lg">
+                        <i class="fa-solid fa-file-pen"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-gray-800 mb-2">صياغة سيرة ذاتية تتوافق مع محركات ATS</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed mb-4">نصائح عمليّة لإبراز خبراتك ومهاراتك في السيرة الذاتية لضمان قبولك في الشركات الكبرى بالمدينة المنورة.</p>
+                    <span class="text-xs font-semibold text-madinah-emerald inline-flex items-center gap-1">قراءة المزيد <i class="fa-solid fa-arrow-left text-[10px]"></i></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-madinah-emerald text-white pt-12 pb-8 mt-auto border-t border-madinah-gold/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-white/10">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-madinah-gold flex items-center justify-center text-madinah-emerald">
+                            <i class="fa-solid fa-city text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold font-heading text-white">وظائف <span class="text-madinah-gold">المدينة</span></span>
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">الموقع المخصص والأول لعرض الوظائف وفرص التدريب في كافة القطاعات الحيوية بمنطقة المدينة المنورة.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-madinah-gold mb-3 font-heading">روابط سريعة</h4>
+                    <ul class="space-y-2 text-xs text-gray-300">
+                        <li><a href="#jobs-section" class="hover:text-white transition-colors">الوظائف المتاحة اليوم</a></li>
+                        <li><a href="#employers-section" class="hover:text-white transition-colors">إضافة وظيفة جديدة</a></li>
+                        <li><a href="#tips-section" class="hover:text-white transition-colors">نصائح وإرشادات التوظيف</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-madinah-gold mb-3 font-heading">أحياء المدينة الشهيرة</h4>
+                    <ul class="space-y-2 text-xs text-gray-300">
+                        <li><a href="javascript:void(0)" onclick="quickSearch('المنطقة المركزية')" class="hover:text-white">المنطقة المركزية (الحرم)</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSearch('العزيزية')" class="hover:text-white">حي العزيزية</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSearch('سلطانة')" class="hover:text-white">طريق سلطانة</a></li>
+                        <li><a href="javascript:void(0)" onclick="quickSearch('المدينة الصناعية')" class="hover:text-white">المدينة الصناعية</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-madinah-gold mb-3 font-heading">تواصل معنا</h4>
+                    <p class="text-xs text-gray-300 mb-3">للتعاون أو الاستفسارات الخاصة بالشركات بالمدينة:</p>
+                    <div class="flex items-center gap-3 text-lg">
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-madinah-gold hover:text-madinah-emerald transition-all"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-madinah-gold hover:text-madinah-emerald transition-all"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-madinah-gold hover:text-madinah-emerald transition-all"><i class="fa-solid fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 text-center text-xs text-gray-400">
+                <p>© 2026 منصة وظائف المدينة المنورة - جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JOB DETAILS & APPLY MODAL -->
+    <div id="job-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col transform transition-transform duration-300 scale-95" id="job-modal-card">
+            <div class="bg-madinah-emerald text-white p-6 relative">
+                <button onclick="closeJobModal()" class="absolute top-4 left-4 text-white/80 hover:text-white bg-white/10 w-8 h-8 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="flex items-start gap-4">
+                    <div id="modal-company-logo" class="w-14 h-14 rounded-xl bg-white text-madinah-emerald font-bold text-xl flex items-center justify-center shadow-md shrink-0">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="modal-exclusive-badge" class="bg-madinah-gold text-madinah-emerald text-[10px] font-bold px-2 py-0.5 rounded-full hidden">حصرية بالمدينة</span>
+                            <span id="modal-type" class="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">--</span>
+                        </div>
+                        <h2 id="modal-title" class="text-xl font-bold font-heading">--</h2>
+                        <p id="modal-company" class="text-sm text-gray-200 mt-1">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 custom-scrollbar text-gray-800">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                    <div>
+                        <span class="text-gray-400 block">الموقع بالمدينة:</span>
+                        <span id="modal-location" class="font-bold text-gray-700">--</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 block">الراتب الشهري:</span>
+                        <span id="modal-salary" class="font-bold text-madinah-emerald">--</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 block">الخبرة المطلوبة:</span>
+                        <span id="modal-experience" class="font-bold text-gray-700">--</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-sm text-madinah-emerald mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-align-right text-madinah-gold"></i> الوصف الوظيفي والمهمات:
+                    </h3>
+                    <p id="modal-description" class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">--</p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-sm text-madinah-emerald mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-madinah-gold"></i> المهارات والشروط:
+                    </h3>
+                    <ul id="modal-requirements" class="list-disc list-inside text-sm text-gray-600 space-y-1"></ul>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <div class="bg-madinah-bgLight p-4 rounded-xl border border-gray-200/80">
+                    <h3 class="font-bold text-base text-madinah-emerald mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane text-madinah-gold"></i> التقديم المباشر على هذه الوظيفة
+                    </h3>
+                    <form id="apply-job-form" onsubmit="handleApplySubmit(event)" class="space-y-3">
+                        <input type="hidden" id="apply-job-id">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">الاسم الكامل <span class="text-red-500">*</span></label>
+                                <input type="text" id="applicant-name" required placeholder="أدخل اسمك الثلاثي" class="w-full p-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-madinah-emerald">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">رقم الجوال <span class="text-red-500">*</span></label>
+                                <input type="tel" id="applicant-phone" required placeholder="05xxxxxxxx" class="w-full p-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-madinah-emerald">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">البريد الإلكتروني <span class="text-red-500">*</span></label>
+                            <input type="email" id="applicant-email" required placeholder="example@domain.com" class="w-full p-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-madinah-emerald">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">رابط السيرة الذاتية (Google Drive / LinkedIn / Dropbox)</label>
+                            <input type="url" id="applicant-cv" placeholder="https://..." class="w-full p-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:border-madinah-emerald">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-madinah-emerald hover:bg-madinah-olive text-white font-bold rounded-xl shadow-md transition-all text-xs flex items-center justify-center gap-2 mt-2">
+                            <i class="fa-solid fa-check"></i>
+                            <span>إرسال طلب التقديم الآن</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: MANAGE JOBS MODAL -->
+    <div id="manage-jobs-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-4 bg-gray-900 text-white flex items-center justify-between border-b border-madinah-gold/30">
+                <h3 class="font-bold text-sm flex items-center gap-2 text-madinah-gold">
+                    <i class="fa-solid fa-list-check"></i> لوحة إدارة الوظائف المعروضة
+                </h3>
+                <button onclick="toggleManageJobsModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-4 overflow-y-auto space-y-3 custom-scrollbar flex-grow" id="admin-jobs-list">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: THEME CUSTOMIZER MODAL -->
+    <div id="theme-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <h3 class="font-bold text-base text-gray-900 flex items-center gap-2">
+                    <i class="fa-solid fa-palette text-madinah-gold"></i> تخصيص درجات ألوان الموقع
+                </h3>
+                <button onclick="toggleThemeModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700">اللون الأخضر الزمردي الرئيسي (Emerald):</label>
+                    <input type="color" id="theme-emerald-color" value="#1b4332" class="w-full h-10 rounded cursor-pointer border border-gray-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700">اللون الأخضر الزيتوني الداكن (Olive):</label>
+                    <input type="color" id="theme-olive-color" value="#2d5a27" class="w-full h-10 rounded cursor-pointer border border-gray-300">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-gray-700">اللون الذهبي (Gold):</label>
+                    <input type="color" id="theme-gold-color" value="#d4af37" class="w-full h-10 rounded cursor-pointer border border-gray-300">
+                </div>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="saveThemeColors()" class="w-full py-2.5 bg-madinah-emerald text-white rounded-xl font-bold text-xs">حفظ الألوان الجديدة</button>
+                <button onclick="resetThemeColors()" class="py-2.5 px-4 bg-gray-100 text-gray-600 rounded-xl font-bold text-xs">افتراضي</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN: PUBLISH & DEPLOYMENT GUIDE MODAL -->
+    <div id="guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-4 bg-indigo-950 text-white flex items-center justify-between">
+                <h3 class="font-bold text-base flex items-center gap-2 text-indigo-300">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> دليل نشر الموقع والتعديل عليه مجاناً
+                </h3>
+                <button onclick="toggleGuideModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 custom-scrollbar text-xs leading-relaxed text-gray-700">
+                <div class="bg-indigo-50 border border-indigo-100 p-3.5 rounded-xl text-indigo-900">
+                    <p class="font-bold text-sm mb-1">كيف تجعل هذا الموقع يعمل برابط رسمي مجاني؟</p>
+                    <p>هذا الملف مستقر وملف واحد شامل لكل شيء (Single HTML File). يمكنك استضافته مباشرة في أقل من 3 دقائق.</p>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-gray-900">الطريقة الأولى: الرفع المباشر عبر Netlify (الأسهل بدون أكواد)</h4>
+                    <ol class="list-decimal list-inside space-y-1.5 text-gray-600 pr-2">
+                        <li>قم بتحميل ملف هذا الموقع وحفظه باسم <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600">index.html</code> في مجلد مجوف بأجهزة الكومبيوتر.</li>
+                        <li>ادخل على موقع <a href="https://app.netlify.com/drop" target="_blank" class="text-indigo-600 underline font-bold">Netlify Drop</a>.</li>
+                        <li>قم بسحب وإسقاط المجلد وسيتم منحك رابطاً مباشراً يعمل عالمياً مجاناً!</li>
+                    </ol>
+
+                    <h4 class="font-bold text-sm text-gray-900 pt-2">الطريقة الثانية: النشر عبر Vercel</h4>
+                    <ol class="list-decimal list-inside space-y-1.5 text-gray-600 pr-2">
+                        <li>سجل دخولك في موقع <a href="https://vercel.com" target="_blank" class="text-indigo-600 underline font-bold">Vercel.com</a>.</li>
+                        <li>قم بإنشاء مشروع جديد وارفاق ملف <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600">index.html</code>.</li>
+                        <li>ستحصل على شهادة أمان SSL مجانية ورابط سريع جداً.</li>
+                    </ol>
+
+                    <h4 class="font-bold text-sm text-gray-900 pt-2">كيف تعدل الكود مباشرة؟</h4>
+                    <p class="text-gray-600">يمكنك فتح ملف <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600">index.html</code> ببرنامج محرر النصوص مثل (VS Code أو Notepad) وتعديل مصفوفة الوظائف <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600">jobsData</code> البرمجية مباشرة في أسفل الصفحة!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAVED JOBS MODAL -->
+    <div id="saved-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl w-full max-w-xl max-h-[80vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-4 bg-madinah-emerald text-white flex items-center justify-between">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-bookmark text-madinah-gold"></i> الوظائف المحفوظة
+                </h3>
+                <button onclick="toggleSavedModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="saved-jobs-list" class="p-4 overflow-y-auto space-y-3 custom-scrollbar flex-grow"></div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 left-5 z-50 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-madinah-gold text-lg"></i>
+        <span id="toast-message" class="text-xs font-medium">تمت العملية بنجاح</span>
+    </div>
+
+    <script>
+        // Initial Default Data
+        const initialJobsData = [
+            {
+                id: 1,
+                title: "موظف استقبال واشتراكات فندقية",
+                company: "مجموعة فنادق أريج المدينة",
+                logo: "فندق",
+                sector: "السياحة والفندقة",
+                location: "المنطقة المركزية (الحرم)",
+                type: "دوام كامل",
+                salary: "5,500 - 6,500 ريال",
+                experience: "1-3 سنوات",
+                date: "قبل ساعتين",
+                exclusive: true,
+                description: "مطلوب موظف استقبال سعودي الجنسية ذو مظهر لائق ولباقة في التعامل مع زوار ونزلاء المسجد النبوي الشريف. للعمل بالفندق بصفوف الاستقبال وإتمام إجراءات التسكين.",
+                requirements: [
+                    "إتقان اللغة العربية والإنجليزية بشكل جيد",
+                    "حسن المظهر وحسن التعامل مع ضيوف الرحمن",
+                    "خبرة سابقة ببرامج الاستقبال الفندقي (مثل Opera)"
+                ]
+            },
+            {
+                id: 2,
+                title: "مدير مبيعات وتجزئة",
+                company: "شركة النور للمجمعات التجارية",
+                logo: "النور",
+                sector: "المبيعات والتجزئة",
+                location: "المجمعات والمولات",
+                type: "دوام كامل",
+                salary: "8,000 - 10,000 ريال",
+                experience: "أكثر من 3 سنوات",
+                date: "قبل يوم واحد",
+                exclusive: true,
+                description: "إدارة فرع المبيعات بمجمع النور مول بالمدينة المنورة، متابعة حركة المبيعات وتوجيه فريق العمل وتحقيق الأهداف الشهرية.",
+                requirements: [
+                    "خبرة لا تقل عن 3 سنوات في إدارة فروع التجزئة",
+                    "مهارات قيادية عالية وإدارة فرق العمل",
+                    "إعداد التقارير البيعية الدورية"
+                ]
+            },
+            {
+                id: 3,
+                title: "أخصائي تمريض عام",
+                company: "مستشفى الدار الخصوصي بالمدينة",
+                logo: "الدار",
+                sector: "القطاع الصحي",
+                location: "العزيزية",
+                type: "دوام كامل",
+                salary: "7,000 - 8,500 ريال",
+                experience: "1-3 سنوات",
+                date: "قبل 3 أيام",
+                exclusive: false,
+                description: "مطلوب أخصائي/أخصائية تمريض حاصل على تصنيف هيئة التخصصات الصحية ساري للعمل في أقسام الطوارئ والتنويم بفرع العزيزية.",
+                requirements: [
+                    "بكالوريوس تمريض مع تصنيف الهيئة السعودية للتخصصات الصحية",
+                    "قدرة عالية على التعامل مع الحالات الطارئة",
+                    "سكان المدينة المنورة"
+                ]
+            },
+            {
+                id: 4,
+                title: "أخصائي تسويق رقمي (برنامج تمهير)",
+                company: "مؤسسة طَيْبة التقنية للحلول البرمجية",
+                logo: "طيبة",
+                sector: "التكنولوجيا والتقنية",
+                location: "طريق المطار",
+                type: "تدريب / تمهير",
+                salary: "3,000 ريال (مكافأة هدف)",
+                experience: "حديث تخرج / بدون خبرة",
+                date: "اليوم",
+                exclusive: true,
+                description: "فرصة تدريبية ممتازة عبر برنامج تمهير لمدة 6 أشهر لخريجي التسويق والإعلام، تشمل إدارة حسابات التواصل الاجتماعي وصناعة المحتوى بالمدينة.",
+                requirements: [
+                    "مؤهل بكالوريوس تسويق أو إعلام أو تخصص مرتبط",
+                    "مؤهل لشروط برنامج تمهير (لم يسجل في التأمينات آخر 6 أشهر)",
+                    "شغف بصناعة المحتوى التسويقي"
+                ]
+            }
+        ];
+
+        // Persistent States
+        let jobsData = JSON.parse(localStorage.getItem('madinah_jobs_db')) || initialJobsData;
+        let savedJobs = JSON.parse(localStorage.getItem('madinah_saved_jobs')) || [];
+        let isQuickEditActive = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedTheme();
+            loadCustomTexts();
+            renderJobs(jobsData);
+            updateSavedCount();
+        });
+
+        function renderJobs(data) {
+            const container = document.getElementById('job-cards-container');
+            const emptyState = document.getElementById('empty-state');
+            const resultsCount = document.getElementById('results-count');
+
+            resultsCount.textContent = `${data.length} وظيفة`;
+            document.getElementById('stat-jobs').textContent = `${data.length}+`;
+
+            if (data.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = data.map(job => {
+                const isSaved = savedJobs.includes(job.id);
+                return `
+                <div class="job-card bg-white rounded-2xl p-5 border border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative">
+                    <div class="flex items-start gap-4 w-full md:w-auto">
+                        <div class="w-14 h-14 rounded-xl emerald-gradient text-madinah-gold font-bold text-sm flex items-center justify-center shrink-0 border border-madinah-gold/20 shadow-sm">
+                            ${job.logo || 'شركة'}
+                        </div>
+                        <div class="space-y-1 pr-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h3 onclick="openJobModal(${job.id})" class="font-bold text-base text-gray-900 hover:text-madinah-emerald cursor-pointer transition-colors font-heading">
+                                    ${job.title}
+                                </h3>
+                                ${job.exclusive ? `<span class="bg-madinah-softGold/50 text-madinah-emerald border border-madinah-gold/40 text-[10px] font-extrabold px-2 py-0.5 rounded-md"><i class="fa-solid fa-star text-madinah-gold"></i> حصرية بالمدينة</span>` : ''}
+                            </div>
+                            <p class="text-xs font-semibold text-gray-500 flex items-center gap-2">
+                                <span><i class="fa-solid fa-building text-gray-400"></i> ${job.company}</span>
+                                <span>•</span>
+                                <span class="text-madinah-emerald"><i class="fa-solid fa-location-dot"></i> ${job.location}</span>
+                            </p>
+                            <div class="flex flex-wrap items-center gap-2 pt-1 text-xs text-gray-500">
+                                <span class="bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-md font-medium">${job.type}</span>
+                                ${job.salary ? `<span class="bg-emerald-50 text-madinah-emerald font-semibold px-2.5 py-0.5 rounded-md">${job.salary}</span>` : ''}
+                                <span class="text-gray-400"><i class="fa-solid fa-clock text-[10px]"></i> ${job.date}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end pt-3 md:pt-0 border-t md:border-t-0 border-gray-100">
+                        <button onclick="toggleBookmark(${job.id})" class="p-2.5 rounded-xl border ${isSaved ? 'bg-madinah-gold/10 border-madinah-gold text-madinah-gold' : 'border-gray-200 text-gray-400 hover:text-madinah-gold'} transition-all" title="حفظ بالمفضلة">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </button>
+                        <button onclick="deleteJobDirect(${job.id})" class="p-2.5 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 transition-all ${isQuickEditActive ? '' : 'hidden'}" title="حذف هذه الوظيفة">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        <button onclick="openJobModal(${job.id})" class="flex-1 md:flex-initial px-4 py-2.5 bg-madinah-emerald hover:bg-madinah-olive text-white text-xs font-bold rounded-xl shadow transition-all">
+                            تفاصيل والتقديم
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function toggleQuickEditMode() {
+            isQuickEditActive = !isQuickEditActive;
+            const btn = document.getElementById('quick-edit-btn');
+            const label = document.getElementById('quick-edit-label');
+
+            const editableElements = document.querySelectorAll('[data-editable]');
+
+            if (isQuickEditActive) {
+                btn.classList.replace('bg-gray-800', 'bg-madinah-gold');
+                btn.classList.replace('text-madinah-softGold', 'text-gray-900');
+                label.textContent = "إنهاء وتأكيد التعديل المباشر";
+
+                editableElements.forEach(el => {
+                    el.contentEditable = "true";
+                    el.classList.add('editable-highlight');
+                });
+                showToast("تم تفعيل وضع التعديل المباشر. اضغط على أي نص لتعديله!");
+            } else {
+                btn.classList.replace('bg-madinah-gold', 'bg-gray-800');
+                btn.classList.replace('text-gray-900', 'text-madinah-softGold');
+                label.textContent = "تفعيل التعديل المباشر";
+
+                let customTexts = {};
+                editableElements.forEach(el => {
+                    el.contentEditable = "false";
+                    el.classList.remove('editable-highlight');
+                    const key = el.getAttribute('data-editable');
+                    customTexts[key] = el.innerHTML;
+                });
+
+                localStorage.setItem('madinah_custom_texts', JSON.stringify(customTexts));
+                showToast("تم حفظ التغييرات النصية بنجاح!");
+            }
+            renderJobs(jobsData);
+        }
+
+        function loadCustomTexts() {
+            const savedTexts = JSON.parse(localStorage.getItem('madinah_custom_texts'));
+            if (savedTexts) {
+                Object.keys(savedTexts).forEach(key => {
+                    const el = document.querySelector(`[data-editable="${key}"]`);
+                    if (el) el.innerHTML = savedTexts[key];
+                });
+            }
+        }
+
+        function toggleManageJobsModal() {
+            const modal = document.getElementById('manage-jobs-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderAdminJobsList();
+            }
+        }
+
+        function renderAdminJobsList() {
+            const container = document.getElementById('admin-jobs-list');
+            if (jobsData.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-500 py-6">لا توجد وظائف حالية في القائمة.</p>`;
+                return;
+            }
+
+            container.innerHTML = jobsData.map(j => `
+                <div class="p-3.5 bg-gray-50 rounded-xl border border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                    <div>
+                        <span class="font-bold text-gray-900 text-sm block">${j.title}</span>
+                        <span class="text-gray-500">${j.company} • ${j.location} • (${j.type})</span>
+                    </div>
+                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                        <button onclick="deleteJobDirect(${j.id}); renderAdminJobsList();" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-bold">
+                            <i class="fa-solid fa-trash ml-1"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteJobDirect(id) {
+            if (confirm("هل أنت تأكد من إزالة هذه الوظيفة من قائمة الوظائف؟")) {
+                jobsData = jobsData.filter(j => j.id !== id);
+                saveJobsToStorage();
+                renderJobs(jobsData);
+                showToast("تم حذف الوظيفة بنجاح!");
+            }
+        }
+
+        function saveJobsToStorage() {
+            localStorage.setItem('madinah_jobs_db', JSON.stringify(jobsData));
+        }
+
+        function confirmResetData() {
+            if (confirm("هل ترغب في إعادة ضبط كافة البيانات وإزالة التعديلات واستعادة الوظائف الافتراضية؟")) {
+                localStorage.removeItem('madinah_jobs_db');
+                localStorage.removeItem('madinah_custom_texts');
+                localStorage.removeItem('madinah_theme_colors');
+                location.reload();
+            }
+        }
+
+        function toggleThemeModal() {
+            document.getElementById('theme-modal').classList.toggle('hidden');
+        }
+
+        function saveThemeColors() {
+            const emerald = document.getElementById('theme-emerald-color').value;
+            const olive = document.getElementById('theme-olive-color').value;
+            const gold = document.getElementById('theme-gold-color').value;
+
+            const theme = { emerald, olive, gold };
+            localStorage.setItem('madinah_theme_colors', JSON.stringify(theme));
+            applyThemeColors(theme);
+            toggleThemeModal();
+            showToast("تم تطبيق الألوان الجديدة وتعميمها!");
+        }
+
+        function loadSavedTheme() {
+            const theme = JSON.parse(localStorage.getItem('madinah_theme_colors'));
+            if (theme) applyThemeColors(theme);
+        }
+
+        function applyThemeColors(theme) {
+            document.documentElement.style.setProperty('--color-emerald', theme.emerald);
+            document.documentElement.style.setProperty('--color-olive', theme.olive);
+            document.documentElement.style.setProperty('--color-gold', theme.gold);
+        }
+
+        function resetThemeColors() {
+            localStorage.removeItem('madinah_theme_colors');
+            location.reload();
+        }
+
+        function toggleGuideModal() {
+            document.getElementById('guide-modal').classList.toggle('hidden');
+        }
+
+        // Filtering Logic
+        function applyFilters() {
+            const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+            const sector = document.getElementById('search-sector').value;
+            const heroType = document.getElementById('search-type').value;
+            const district = document.getElementById('filter-district').value;
+            const selectedWorkTypeRadio = document.querySelector('input[name="workTypeRadio"]:checked')?.value;
+            const finalType = heroType || selectedWorkTypeRadio;
+            const expCheckboxes = Array.from(document.querySelectorAll('.exp-checkbox:checked')).map(cb => cb.value);
+            const exclusiveOnly = document.getElementById('exclusive-only').checked;
+
+            const filtered = jobsData.filter(job => {
+                const matchKeyword = !keyword || job.title.toLowerCase().includes(keyword) || job.company.toLowerCase().includes(keyword) || job.description.toLowerCase().includes(keyword);
+                const matchSector = !sector || job.sector === sector;
+                const matchDistrict = !district || job.location === district;
+                const matchType = !finalType || job.type === finalType;
+                const matchExp = expCheckboxes.length === 0 || expCheckboxes.includes(job.experience);
+                const matchExclusive = !exclusiveOnly || job.exclusive === true;
+
+                return matchKeyword && matchSector && matchDistrict && matchType && matchExp && matchExclusive;
+            });
+
+            renderJobs(filtered);
+        }
+
+        function handleHeroSearch(e) {
+            e.preventDefault();
+            applyFilters();
+            scrollToSection('jobs-section');
+        }
+
+        function quickSearch(tag) {
+            document.getElementById('search-keyword').value = tag;
+            applyFilters();
+            scrollToSection('jobs-section');
+        }
+
+        function resetFilters() {
+            document.getElementById('search-keyword').value = '';
+            document.getElementById('search-sector').value = '';
+            document.getElementById('search-type').value = '';
+            document.getElementById('filter-district').value = '';
+            document.getElementById('exclusive-only').checked = false;
+            document.querySelectorAll('input[name="workTypeRadio"]')[0].checked = true;
+            document.querySelectorAll('.exp-checkbox').forEach(cb => cb.checked = false);
+
+            renderJobs(jobsData);
+        }
+
+        // Modal Handlers
+        function openJobModal(id) {
+            const job = jobsData.find(j => j.id === id);
+            if (!job) return;
+
+            document.getElementById('apply-job-id').value = job.id;
+            document.getElementById('modal-title').textContent = job.title;
+            document.getElementById('modal-company').textContent = job.company;
+            document.getElementById('modal-company-logo').textContent = job.logo || 'شركة';
+            document.getElementById('modal-type').textContent = job.type;
+            document.getElementById('modal-location').textContent = job.location;
+            document.getElementById('modal-salary').textContent = job.salary || 'غير موضح';
+            document.getElementById('modal-experience').textContent = job.experience;
+            document.getElementById('modal-description').textContent = job.description;
+
+            const exclusiveBadge = document.getElementById('modal-exclusive-badge');
+            if (job.exclusive) exclusiveBadge.classList.remove('hidden');
+            else exclusiveBadge.classList.add('hidden');
+
+            const reqsList = document.getElementById('modal-requirements');
+            reqsList.innerHTML = (job.requirements || []).map(r => `<li>${r}</li>`).join('');
+
+            const modal = document.getElementById('job-modal');
+            const modalCard = document.getElementById('job-modal-card');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalCard.classList.remove('scale-95');
+                modalCard.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeJobModal() {
+            const modal = document.getElementById('job-modal');
+            const modalCard = document.getElementById('job-modal-card');
+            modal.classList.add('opacity-0');
+            modalCard.classList.remove('scale-100');
+            modalCard.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        // Bookmark Toggle
+        function toggleBookmark(id) {
+            const index = savedJobs.indexOf(id);
+            if (index > -1) {
+                savedJobs.splice(index, 1);
+                showToast("تم إزالة الوظيفة من المفضلة");
+            } else {
+                savedJobs.push(id);
+                showToast("تم حفظ الوظيفة في قائمة المفضلة!");
+            }
+            localStorage.setItem('madinah_saved_jobs', JSON.stringify(savedJobs));
+            updateSavedCount();
+            applyFilters();
+            renderSavedJobsList();
+        }
+
+        function updateSavedCount() {
+            document.getElementById('saved-count').textContent = savedJobs.length;
+            document.getElementById('saved-count-mobile').textContent = savedJobs.length;
+        }
+
+        function toggleSavedModal() {
+            const modal = document.getElementById('saved-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                renderSavedJobsList();
+            }
+        }
+
+        function renderSavedJobsList() {
+            const container = document.getElementById('saved-jobs-list');
+            const savedData = jobsData.filter(j => savedJobs.includes(j.id));
+
+            if (savedData.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-500 py-8">لا توجد وظائف محفوظة حتى الآن.</p>`;
+                return;
+            }
+
+            container.innerHTML = savedData.map(j => `
+                <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-xs text-gray-800">${j.title}</h4>
+                        <p class="text-[11px] text-gray-500">${j.company} - ${j.location}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openJobModal(${j.id}); toggleSavedModal();" class="text-xs bg-madinah-emerald text-white px-2.5 py-1 rounded-lg">عرض</button>
+                        <button onclick="toggleBookmark(${j.id})" class="text-xs text-red-500 hover:bg-red-50 p-1 rounded"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle Form Applications & New Jobs
+        function handleApplySubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('applicant-name').value;
+            closeJobModal();
+            showToast(`شكراً لك يا ${name}! تم إرسال طلب التقديم بنجاح إلى الجهة المعنية.`);
+            document.getElementById('apply-job-form').reset();
+        }
+
+        function handleAddNewJob(e) {
+            e.preventDefault();
+            const title = document.getElementById('post-title').value;
+            const company = document.getElementById('post-company').value;
+            const sector = document.getElementById('post-sector').value;
+            const location = document.getElementById('post-location').value;
+            const type = document.getElementById('post-type').value;
+            const salary = document.getElementById('post-salary').value;
+            const desc = document.getElementById('post-desc').value;
+            const exclusive = document.getElementById('post-exclusive').checked;
+
+            const newJob = {
+                id: Date.now(),
+                title: title,
+                company: company,
+                logo: company.substring(0, 4),
+                sector: sector,
+                location: location,
+                type: type,
+                salary: salary || "حسب المقابلة",
+                experience: "حسب متطلبات الوظيفة",
+                date: "الآن",
+                exclusive: exclusive,
+                description: desc,
+                requirements: ["اجتياز المقابلة الشخصية بالشركة", "الإقامة في مدينة المدينة المنورة"]
+            };
+
+            jobsData.unshift(newJob);
+            saveJobsToStorage();
+            renderJobs(jobsData);
+            document.getElementById('new-job-form').reset();
+            showToast("تم نشر وحفظ الإعلان الوظيفي بنجاح بالمنصة!");
+            scrollToSection('jobs-section');
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3500);
+        }
+    </script>
+</body>
+</html>
